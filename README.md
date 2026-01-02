@@ -21,8 +21,8 @@ A **React-based quiz engine with Zustand** state management and runtime configur
 
 ## Demo
 
-The project is designed to run locally.
-A live demo can be added after deployment (Netlify / GitHub Pages).
+Live demo is available here:  
+[https://react-quiz-engine.netlify.app/](https://react-quiz-engine.netlify.app/)
 
 ---
 
