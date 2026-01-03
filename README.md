@@ -1,6 +1,6 @@
-# React Quiz Engine
+# React Quiz App
 
-A **React-based quiz engine with Zustand** state management and runtime configuration, focused on clean architecture, and testability.
+A modern, feature-rich **quiz application built with React**, focused on clean architecture, state management, and testability.
 
 ## Features
 
@@ -21,8 +21,8 @@ A **React-based quiz engine with Zustand** state management and runtime configur
 
 ## Demo
 
-Live demo is available here:  
-[https://react-quiz-engine.netlify.app/](https://react-quiz-engine.netlify.app/)
+The project is designed to run locally.
+A live demo can be added after deployment (Netlify / GitHub Pages).
 
 ---
 
