@@ -17,7 +17,11 @@ function HeaderIcons({
     <div className="header-icons">
       <DifficultyBadge difficulty={difficulty} />
 
-      <LastResultButton result={lastResult} onClick={onShowLast} />
+      <LastResultButton
+        result={lastResult}
+        onClick={onShowLast}
+        disabled={!lastResult}
+      />
 
       <StreakIndicator value={streak.current} />
 

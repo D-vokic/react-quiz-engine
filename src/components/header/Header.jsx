@@ -16,6 +16,11 @@ function Header({ onOpenSettings }) {
 
   const [showLast, setShowLast] = useState(false);
 
+  const handleShowLast = () => {
+    if (!lastResult) return;
+    setShowLast(true);
+  };
+
   return (
     <header className="header">
       <div className="header-left">
@@ -30,11 +35,11 @@ function Header({ onOpenSettings }) {
           onOpenSettings={onOpenSettings}
           streak={streak}
           lastResult={lastResult}
-          onShowLast={() => setShowLast(true)}
+          onShowLast={handleShowLast}
         />
       </div>
 
-      {showLast && (
+      {lastResult && showLast && (
         <LastResultModal
           result={lastResult}
           onClose={() => setShowLast(false)}
