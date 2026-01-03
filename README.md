@@ -6,7 +6,7 @@ A modern, feature-rich **quiz application built with React**, focused on clean a
 
 - **Feature-based project architecture** for scalable and maintainable code
 - **Zustand state management** with sliced store logic
-- **Settings modal** for runtime configuration
+- **Settings panel** for runtime configuration and feature toggles
 - **Progress bar** indicating quiz completion and real-time quiz tracking
 - **Timer per question** with automatic timeout handling
 - **Retry mode** for incorrectly answered questions only
@@ -73,10 +73,9 @@ Retry only previously incorrect questions to improve weak areas.
 ### Statistics
 
 - Best score
-- Last result
-- Accuracy per difficulty
+- Accuracy tracking
+- Last result summary
 - Weak questions tracking
-- Streak tracking across sessions
 
 ### Theme
 
@@ -127,6 +126,7 @@ src/
 ├─ main.jsx
 └─ App.jsx
 
+(Some utility and adapter files omitted for brevity.)
 
 ```
 
@@ -182,6 +182,17 @@ npm run dev
 
 ---
 
+### Question Sources
+
+The quiz can operate using:
+
+- Local question data (default)
+- External API source (via adapter layer)
+
+The data source can be toggled via settings without affecting quiz logic.
+
+---
+
 ## Testing
 
 The project includes unit tests for:
@@ -193,7 +204,7 @@ The project includes unit tests for:
 Run tests with:
 
 ```Bash
-npm run test
+npm test
 ```
 
 ## Built With
