@@ -21,8 +21,7 @@ A modern, feature-rich **quiz application built with React**, focused on clean a
 
 ## Demo
 
-The project is designed to run locally.
-A live demo can be added after deployment (Netlify / GitHub Pages).
+Live demo: [https://react-quiz-engine.netlify.app/](https://react-quiz-engine.netlify.app/)
 
 ---
 
