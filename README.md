@@ -25,6 +25,20 @@ Live demo: [https://react-quiz-engine.netlify.app/](https://react-quiz-engine.ne
 
 ---
 
+### API Limitations
+
+This application uses a free public trivia API (Open Trivia Database) for demonstration purposes.
+
+**Important note:**
+
+- The API is **not fully compatible** with all quiz categories used in this application.
+- Some custom or domain-specific quizzes (e.g. _Taylor Swift_) are **not supported at all** by the free API.
+- In such cases, the application gracefully falls back to local question data or displays an informational message.
+
+To support **fully custom, niche, or branded quizzes**, a **paid or custom-built API** would be required.
+
+---
+
 ## Table of Contents
 
 - [Quiz App](#quiz-app)
