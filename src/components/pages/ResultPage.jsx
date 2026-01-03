@@ -1,24 +1,45 @@
 import { useQuizStore } from "../store/useQuizStore.jsx";
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 function ResultPage() {
   const score = useQuizStore((s) => s.score);
-  const restart = useQuizStore((s) => s.restart);
-  const answersLog = useQuizStore((s) => s.answersLog);
-  const weakQuestions = useQuizStore((s) => s.weakQuestions);
-  const startRetryWrong = useQuizStore((s) => s.startRetryWrong);
+  const bestScore = useQuizStore((s) => s.bestScore);
+  const difficulty = useQuizStore((s) => s.difficulty);
   const difficultyStats = useQuizStore((s) => s.difficultyStats);
+  const weakQuestions = useQuizStore((s) => s.weakQuestions);
+  const answersLog = useQuizStore((s) => s.answersLog);
+  const restart = useQuizStore((s) => s.restart);
+  const startRetryWrong = useQuizStore((s) => s.startRetryWrong);
+  const lastResult = useQuizStore((s) => s.lastResult);
+  const setLastResult = useQuizStore((s) => s.setLastResult);
 
   const [showWeak, setShowWeak] = useState(false);
   const [showReview, setShowReview] = useState(false);
 
   const weakList = Object.values(weakQuestions).filter((q) => q.wrong > 0);
 
-  const accuracy = (d) => {
-    const stat = difficultyStats[d];
-    if (!stat || stat.total === 0) return null;
-    return Math.round((stat.correct / stat.total) * 100);
-  };
+  const accuracy = useCallback(
+    (d) => {
+      const stat = difficultyStats[d];
+      if (!stat || stat.total === 0) return null;
+      return Math.round((stat.correct / stat.total) * 100);
+    },
+    [difficultyStats]
+  );
+
+  useEffect(() => {
+    if (!lastResult) {
+      const result = {
+        score,
+        difficulty,
+        accuracy: accuracy(difficulty),
+        weakCount: weakList.length,
+      };
+
+      localStorage.setItem("lastResult", JSON.stringify(result));
+      setLastResult(result);
+    }
+  }, [lastResult, score, difficulty, weakList.length, accuracy, setLastResult]);
 
   return (
     <div className="result result-compact">
@@ -30,33 +51,10 @@ function ResultPage() {
           <strong>{score}</strong>
         </div>
 
-        {accuracy("easy") !== null && (
-          <div className="summary-item">
-            <span>Easy</span>
-            <strong>{accuracy("easy")}%</strong>
-          </div>
-        )}
-
-        {accuracy("normal") !== null && (
-          <div className="summary-item">
-            <span>Normal</span>
-            <strong>{accuracy("normal")}%</strong>
-          </div>
-        )}
-
-        {accuracy("hard") !== null && (
-          <div className="summary-item">
-            <span>Hard</span>
-            <strong>{accuracy("hard")}%</strong>
-          </div>
-        )}
-
-        {weakList.length > 0 && (
-          <div className="summary-item">
-            <span>Weak</span>
-            <strong>{weakList.length}</strong>
-          </div>
-        )}
+        <div className="summary-item">
+          <span>Best score</span>
+          <strong>{bestScore}</strong>
+        </div>
       </div>
 
       <div className="result-actions horizontal">

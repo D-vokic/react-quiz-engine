@@ -35,6 +35,8 @@ function QuestionCard() {
 
   const current = questions[currentIndex];
 
+  if (!current) return null;
+
   const handleAnswer = (index) => {
     if (selected !== null) return;
 

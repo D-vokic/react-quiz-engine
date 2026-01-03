@@ -10,7 +10,13 @@ import SettingsModal from "./components/settings/SettingsModal.jsx";
 
 function App() {
   const status = useQuizStore((s) => s.status);
+  const questions = useQuizStore((s) => s.questions);
+  const currentIndex = useQuizStore((s) => s.currentIndex);
+
   const [showSettings, setShowSettings] = useState(false);
+
+  const hasActiveQuestion =
+    status === "quiz" && questions[currentIndex] !== undefined;
 
   return (
     <>
@@ -20,8 +26,12 @@ function App() {
         <Header onOpenSettings={() => setShowSettings(true)} />
 
         {status === "start" && <StartPage />}
-        {status === "quiz" && <QuestionCard />}
+
+        {hasActiveQuestion && <QuestionCard />}
+
         {status === "result" && <ResultPage />}
+
+        {status === "quiz" && !hasActiveQuestion && <ResultPage />}
 
         <Footer />
       </div>

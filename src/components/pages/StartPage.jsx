@@ -1,13 +1,27 @@
 import { useQuizStore } from "../store/useQuizStore";
+import { useEffect } from "react";
 
 function StartPage() {
   const category = useQuizStore((s) => s.category);
   const setCategory = useQuizStore((s) => s.setCategory);
+
+  const source = useQuizStore((s) => s.source);
+  const setQuestionSource = useQuizStore((s) => s.setQuestionSource);
+
   const startQuiz = useQuizStore((s) => s.startQuiz);
+  const startQuizFromApi = useQuizStore((s) => s.startQuizFromApi);
+
+  const isLoading = useQuizStore((s) => s.isLoading);
+  const error = useQuizStore((s) => s.error);
+
   const categoryStats = useQuizStore((s) => s.categoryStats);
   const getRecommendedDifficulty = useQuizStore(
     (s) => s.getRecommendedDifficulty
   );
+
+  useEffect(() => {
+    setCategory(null);
+  }, [setCategory]);
 
   const quizzes = [
     { key: "html", label: "HTML" },
@@ -23,9 +37,39 @@ function StartPage() {
       ? getRecommendedDifficulty(category)
       : null;
 
+  const handleStart = () => {
+    if (source === "api") {
+      startQuizFromApi();
+    } else {
+      startQuiz();
+    }
+  };
+
   return (
     <div className="start">
       <h2>Choose Quiz</h2>
+
+      <div style={{ marginBottom: "1rem" }}>
+        <label style={{ marginRight: "1rem" }}>
+          <input
+            type="radio"
+            checked={source === "local"}
+            onChange={() => setQuestionSource("local")}
+            disabled={isLoading}
+          />{" "}
+          Local questions
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            checked={source === "api"}
+            onChange={() => setQuestionSource("api")}
+            disabled={isLoading}
+          />{" "}
+          API questions
+        </label>
+      </div>
 
       <div className="quiz-grid">
         {quizzes.map((quiz) => {
@@ -37,7 +81,7 @@ function StartPage() {
               className={`quiz-card ${quiz.key === "taylor" ? "taylor" : ""} ${
                 category === quiz.key ? "active" : ""
               }`}
-              onClick={() => setCategory(quiz.key)}
+              onClick={() => !isLoading && setCategory(quiz.key)}
             >
               <div>{quiz.label}</div>
 
@@ -62,8 +106,19 @@ function StartPage() {
         </p>
       )}
 
-      <button onClick={startQuiz} disabled={!category}>
-        Start Quiz
+      {/* ERROR */}
+      {error && (
+        <p style={{ color: "crimson", marginTop: "0.75rem" }}>{error}</p>
+      )}
+
+      {isLoading && (
+        <p style={{ marginTop: "0.75rem", opacity: 0.75 }}>
+          Loading questions...
+        </p>
+      )}
+
+      <button onClick={handleStart} disabled={!category || isLoading}>
+        {isLoading ? "Loading..." : "Start Quiz"}
       </button>
     </div>
   );
