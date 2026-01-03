@@ -18,8 +18,15 @@ export const statsSlice = (set) => ({
   lastResult: JSON.parse(localStorage.getItem("lastResult")) || null,
 
   resetStatistics: () => {
-    localStorage.clear();
+    // ✅ brišemo SAMO statistiku
+    localStorage.removeItem("bestScore");
+    localStorage.removeItem("weakQuestions");
+    localStorage.removeItem("difficultyStats");
+    localStorage.removeItem("streak");
+    localStorage.removeItem("lastResult");
+
     set({
+      bestScore: 0,
       weakQuestions: {},
       difficultyStats: {
         easy: { correct: 0, total: 0 },
@@ -27,8 +34,14 @@ export const statsSlice = (set) => ({
         hard: { correct: 0, total: 0 },
       },
       streak: { current: 0, longest: 0, lastDate: null },
-      bestScore: 0,
       lastResult: null,
+
+      status: "start",
+      questions: [],
+      currentIndex: 0,
+      score: 0,
+      answersLog: [],
+      mode: "normal",
     });
   },
 });

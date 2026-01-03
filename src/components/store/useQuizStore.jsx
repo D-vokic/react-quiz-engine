@@ -10,4 +10,13 @@ export const useQuizStore = create((set, get) => ({
   ...settingsSlice(set, get),
   ...quizSlice(set, get),
   ...statsSlice(set, get),
+
+  restart: () => {
+    const originalRestart = uiSlice(set, get).restart;
+    if (typeof originalRestart === "function") {
+      originalRestart();
+    }
+
+    set({ source: "local" });
+  },
 }));
