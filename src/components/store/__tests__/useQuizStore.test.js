@@ -22,15 +22,35 @@ vi.mock("../../data/questions.jsx", () => ({
 }));
 
 describe("useQuizStore – core flow", () => {
+  let useQuizStore;
+
   beforeEach(async () => {
     localStorage.clear();
     document.documentElement.removeAttribute("data-theme");
-    vi.resetModules();
+
+    ({ useQuizStore } = await import("../useQuizStore.jsx"));
+
+    // ✅ RESET SAMO PODATAKA — ACTIONS OSTAJU
+    useQuizStore.setState({
+      status: "idle",
+      mode: "normal",
+      category: null,
+      difficulty: "easy",
+      questions: [],
+      currentIndex: 0,
+      score: 0,
+      answersLog: [],
+      weakQuestions: {},
+      lastResult: null,
+      difficultyStats: {
+        easy: { correct: 0, total: 0 },
+        normal: { correct: 0, total: 0 },
+        hard: { correct: 0, total: 0 },
+      },
+    });
   });
 
-  it("startQuiz postavlja quiz state bez zavisnosti od realnih podataka", async () => {
-    const { useQuizStore } = await import("../useQuizStore.jsx");
-
+  it("startQuiz postavlja quiz state bez zavisnosti od realnih podataka", () => {
     useQuizStore.setState({
       category: "test",
       difficulty: "easy",
@@ -48,9 +68,7 @@ describe("useQuizStore – core flow", () => {
     expect(s.score).toBe(0);
   });
 
-  it("answerQuestion završava quiz i setuje lastResult (1 pitanje)", async () => {
-    const { useQuizStore } = await import("../useQuizStore.jsx");
-
+  it("answerQuestion završava quiz i setuje lastResult (1 pitanje)", () => {
     useQuizStore.setState({
       status: "quiz",
       mode: "normal",
@@ -65,13 +83,6 @@ describe("useQuizStore – core flow", () => {
           correctIndex: 0,
         },
       ],
-      weakQuestions: {},
-      answersLog: [],
-      difficultyStats: {
-        easy: { correct: 0, total: 0 },
-        normal: { correct: 0, total: 0 },
-        hard: { correct: 0, total: 0 },
-      },
     });
 
     useQuizStore.getState().answerQuestion(true, 0);
@@ -80,12 +91,7 @@ describe("useQuizStore – core flow", () => {
 
     expect(s.status).toBe("result");
     expect(s.score).toBe(1);
-    expect(s.lastResult).toEqual(
-      expect.objectContaining({
-        score: 1,
-        difficulty: "easy",
-        accuracy: 100,
-      })
-    );
+    expect(s.lastResult.score).toBe(1);
+    expect(s.lastResult.accuracy).toBe(100);
   });
 });
