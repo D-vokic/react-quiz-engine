@@ -59,7 +59,7 @@ export const quizSlice = (set, get) => ({
 
     try {
       const res = await fetch(
-        `https://opentdb.com/api.php?amount=${questionLimit}&category=${apiCategory}&type=multiple`
+        `https://opentdb.com/api.php?amount=${questionLimit}&category=${apiCategory}&type=multiple`,
       );
 
       const data = await res.json();
@@ -100,7 +100,7 @@ export const quizSlice = (set, get) => ({
   },
 
   answerQuestion: (isCorrect, selectedIndex) => {
-    const { currentIndex, questions, score, answersLog } = get();
+    const { currentIndex, questions, score, answersLog, weakQuestions } = get();
     const q = questions[currentIndex];
 
     const newLog = [
@@ -118,8 +118,9 @@ export const quizSlice = (set, get) => ({
 
     if (nextIndex >= questions.length) {
       const accuracy = Math.round((newScore / questions.length) * 100);
+      const weakCount = Object.keys(weakQuestions || {}).length;
 
-      const lastResult = { score: newScore, accuracy };
+      const lastResult = { score: newScore, accuracy, weakCount };
 
       localStorage.setItem("lastResult", JSON.stringify(lastResult));
 

@@ -30,7 +30,6 @@ describe("useQuizStore – core flow", () => {
 
     ({ useQuizStore } = await import("../useQuizStore.jsx"));
 
-    // ✅ RESET SAMO PODATAKA — ACTIONS OSTAJU
     useQuizStore.setState({
       status: "idle",
       mode: "normal",
