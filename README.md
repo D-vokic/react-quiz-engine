@@ -8,12 +8,12 @@ This repository represents **v1.0 – the first stable release**, after full str
 
 ## Project Status
 
-- ✅ Feature complete
-- ✅ Structurally verified
-- ✅ Implementation fully reviewed
-- ✅ Stable (no runtime-blocking issues)
-- ✅ Unit tests passing
-- 🟡 No backend / deployment configuration
+- Feature complete
+- Structurally verified
+- Implementation fully reviewed
+- Stable (no runtime-blocking issues)
+- Unit tests passing
+- No backend / deployment configuration
 
 This version serves as a **stable baseline** for future controlled development.
 
@@ -255,7 +255,7 @@ You can reach out via:
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
