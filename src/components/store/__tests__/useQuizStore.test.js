@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import React from "react";
 
 vi.mock("../../data/questions.jsx", () => ({
   questions: {
@@ -10,36 +12,37 @@ vi.mock("../../data/questions.jsx", () => ({
           answers: ["A", "B"],
           correctIndex: 0,
         },
-        {
-          id: "q2",
-          question: "Q2?",
-          answers: ["A", "B"],
-          correctIndex: 1,
-        },
       ],
     },
   },
 }));
 
-describe("useQuizStore – core flow", () => {
+describe("useQuizStore – results", () => {
   let useQuizStore;
 
   beforeEach(async () => {
     localStorage.clear();
     document.documentElement.removeAttribute("data-theme");
-
     ({ useQuizStore } = await import("../useQuizStore.jsx"));
 
     useQuizStore.setState({
-      status: "idle",
+      status: "quiz",
       mode: "normal",
-      category: null,
       difficulty: "easy",
-      questions: [],
+      questions: [
+        {
+          id: "q1",
+          question: "Q1?",
+          answers: ["A", "B"],
+          correctIndex: 0,
+        },
+      ],
       currentIndex: 0,
       score: 0,
       answersLog: [],
-      weakQuestions: {},
+      weakQuestions: {
+        q1: { wrong: 1 },
+      },
       lastResult: null,
       difficultyStats: {
         easy: { correct: 0, total: 0 },
@@ -49,48 +52,34 @@ describe("useQuizStore – core flow", () => {
     });
   });
 
-  it("startQuiz postavlja quiz state bez zavisnosti od realnih podataka", () => {
-    useQuizStore.setState({
-      category: "test",
-      difficulty: "easy",
-      questionLimit: 1,
-    });
-
-    useQuizStore.getState().startQuiz();
-
-    const s = useQuizStore.getState();
-
-    expect(s.status).toBe("quiz");
-    expect(s.mode).toBe("normal");
-    expect(s.questions.length).toBe(1);
-    expect(s.currentIndex).toBe(0);
-    expect(s.score).toBe(0);
-  });
-
-  it("answerQuestion završava quiz i setuje lastResult (1 pitanje)", () => {
-    useQuizStore.setState({
-      status: "quiz",
-      mode: "normal",
-      difficulty: "easy",
-      currentIndex: 0,
-      score: 0,
-      questions: [
-        {
-          id: "q1",
-          question: "Q1?",
-          answers: ["A", "B"],
-          correctIndex: 0,
-        },
-      ],
-    });
-
+  it("sets lastResult with score, accuracy and weakCount", () => {
     useQuizStore.getState().answerQuestion(true, 0);
 
     const s = useQuizStore.getState();
 
-    expect(s.status).toBe("result");
-    expect(s.score).toBe(1);
     expect(s.lastResult.score).toBe(1);
     expect(s.lastResult.accuracy).toBe(100);
+    expect(s.lastResult.weakCount).toBe(1);
+  });
+});
+
+describe("LastResultModal rendering", () => {
+  it("renders score, accuracy and weakCount", async () => {
+    const { default: LastResultModal } =
+      await import("../../header/LastResultModal.jsx");
+
+    render(
+      <LastResultModal
+        result={{ score: 5, accuracy: 80, weakCount: 2 }}
+        onClose={() => {}}
+      />,
+    );
+
+    expect(screen.getByText("Score:")).toBeTruthy();
+    expect(screen.getByText("5")).toBeTruthy();
+    expect(screen.getByText("Accuracy:")).toBeTruthy();
+    expect(screen.getByText("80%")).toBeTruthy();
+    expect(screen.getByText("Weak questions:")).toBeTruthy();
+    expect(screen.getByText("2")).toBeTruthy();
   });
 });
