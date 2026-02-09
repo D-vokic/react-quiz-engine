@@ -122,9 +122,8 @@ src/
 ├─ main.jsx
 └─ App.jsx
 
-All files and folders above were **explicitly reviewed and verified**.
-
 ```
+All files and folders above were **explicitly reviewed and verified**.
 
 State management is split into dedicated Zustand slices:
 
