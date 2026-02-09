@@ -3,7 +3,7 @@
 ## React Quiz Application – Unified Project Context
 
 **Location:** `/docs/PROJECT_CONTEXT.md`  
-**Last updated:** After full structural & deep implementation verification  
+**Last updated:** After v1.0 release (post full structural & deep implementation verification)  
 **Scope:** This document is the authoritative context for continuing development
 
 ---
@@ -28,7 +28,8 @@ If something is **not explicitly written here**, it must be treated as **non-exi
 **State management:** Zustand  
 **Persistence:** localStorage (settings + statistics only)  
 **Backend:** None  
-**Deployment:** Not configured
+**Deployment:** Not configured  
+**Release status:** v1.0 released and tagged on GitHub
 
 This is a **client-side quiz engine** with configurable settings, statistics tracking, and sound/timer support.
 
@@ -38,15 +39,16 @@ This is a **client-side quiz engine** with configurable settings, statistics tra
 
 ### Overall Status
 
-- ✅ Feature complete
-- ✅ Structurally verified
-- ✅ Implementationally verified (all source files read)
-- ✅ Stable (no runtime-blocking issues)
-- ✅ Unit tests passing
+- Feature complete
+- Structurally verified
+- Implementationally verified (all source files read)
+- Stable (no runtime-blocking issues)
+- Unit tests passing
+- **v1.0 release created**
 
 ### Active Phase
 
-**Post-verification / maintenance only**
+**Post-release / maintenance only**
 
 Allowed work:
 
@@ -242,6 +244,7 @@ This project is:
 - Structurally sound
 - Implementationally verified
 - Stable
+- **Released as v1.0**
 - Ready for controlled extension
 
 Any future work should start **from this document**.
