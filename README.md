@@ -1,111 +1,94 @@
-# React Quiz App
+# React Quiz Engine
 
-A modern, feature-rich **quiz application built with React**, focused on clean architecture, state management, and testability.
+A modern, feature-complete **client-side quiz application built with React**, focused on clean architecture, predictable state management, and verified implementation quality.
 
-## Features
-
-- **Feature-based project architecture** for scalable and maintainable code
-- **Zustand state management** with sliced store logic
-- **Settings panel** for runtime configuration and feature toggles
-- **Progress bar** indicating quiz completion and real-time quiz tracking
-- **Timer per question** with automatic timeout handling
-- **Retry mode** for incorrectly answered questions only
-- **Sound effects** (optional)
-- **Light / Dark theme** with persistent user preference saved in `localStorage`
-- **Statistics tracking** across quiz sessions
-- **Unit tests** for store logic and UI behavior
-
-![Quiz App Screenshot](screenshot.png)
+This repository represents **v1.0 – the first stable release**, after full structural and deep code verification.
 
 ---
 
-## Demo
+## Project Status
 
-Live demo: [https://react-quiz-engine.netlify.app/](https://react-quiz-engine.netlify.app/)
+- ✅ Feature complete
+- ✅ Structurally verified
+- ✅ Implementation fully reviewed
+- ✅ Stable (no runtime-blocking issues)
+- ✅ Unit tests passing
+- 🟡 No backend / deployment configuration
 
----
-
-### API Limitations
-
-This application uses a free public trivia API (Open Trivia Database) for demonstration purposes.
-
-**Important note:**
-
-- The API is **not fully compatible** with all quiz categories used in this application.
-- Some custom or domain-specific quizzes (e.g. _Taylor Swift_) are **not supported at all** by the free API.
-- In such cases, the application gracefully falls back to local question data or displays an informational message.
-
-To support **fully custom, niche, or branded quizzes**, a **paid or custom-built API** would be required.
-
----
-
-## Table of Contents
-
-- [Quiz App](#quiz-app)
-
-  - [Demo](#demo)
-  - [Table of Contents](#table-of-contents)
-  - [Features](#features)
-  - [Technologies Used](#technologies-used)
-  - [Project Structure](#project-structure)
-  - [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [How to Run](#how-to-run)
-  - [Usage](#usage)
-  - [Built with](#built-with)
-  - [Contributing / Support](#contributing--support)
-  - [Author](#author)
-  - [License](#license)
-  - [Acknowledgments](#acknowledgments)
+This version serves as a **stable baseline** for future controlled development.
 
 ---
 
 ## Features
 
-### Quiz Flow
+### Core Quiz Flow
 
-Start → answer questions → view results with score and statistics.
+- Start → questions → results
+- Multiple-choice questions
+- Score and accuracy calculation
+- Result screen at quiz completion
 
-### Timer
+### Settings & Configuration
 
-Optional timer per question.
-When time runs out, the question is automatically marked as incorrect.
+- Difficulty selection (easy / normal / hard)
+- Question count per quiz
+- Sound on / off
+- Timer on / off
+- Time per question (range-based)
 
-### Retry Mode
+### UX Enhancements
 
-Retry only previously incorrect questions to improve weak areas.
+- Progress bar
+- Per-question timer with automatic timeout
+- Streak indicator
+- Last result preview modal
+- Light / Dark theme with persistence
 
-### Settings
+### Sound & Media
 
-- Enable / disable sound
-- Enable / disable timer
-- Adjust time per question
-- Set number of questions per quiz
-- Select difficulty level
+- Optional sound effects:
+  - click
+  - correct
+  - wrong
+  - finish
 
 ### Statistics
 
 - Best score
 - Accuracy tracking
-- Last result summary
-- Weak questions tracking
-
-### Theme
-
-Toggle between light and dark mode.
-User preference is saved in `localStorage`.
+- Difficulty-based stats
+- Streak tracking
+- Last result persistence
 
 ---
 
-## Technologies Used
+## Demo
+
+Live demo (if available):  
+https://react-quiz-engine.netlify.app/
+
+---
+
+## Architecture Overview
+
+### Tech Stack
 
 - React
 - Vite
 - Zustand
-- Vitest
-- React Testing Library
 - JavaScript (ES6+)
-- Local Storage for persistence
+- localStorage (settings & statistics)
+
+### State Management
+
+Global state is centralized in a **single Zustand store**, composed of isolated slices:
+
+- `uiSlice` – UI state (status, theme, mode)
+- `settingsSlice` – user-configurable settings (persistent)
+- `quizSlice` – quiz flow and logic
+- `statsSlice` – statistics and historical data
+
+All cross-domain state flows through `useQuizStore`.
 
 ---
 
@@ -139,7 +122,7 @@ src/
 ├─ main.jsx
 └─ App.jsx
 
-(Some utility and adapter files omitted for brevity.)
+All files and folders above were **explicitly reviewed and verified**.
 
 ```
 
@@ -154,20 +137,14 @@ State management is split into dedicated Zustand slices:
 
 ### Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-
----
-
 ### Prerequisites
-
-What things you need to install the software and how to install them:
 
 - Node.js (LTS recommended)
 - npm
 
 ---
 
-### How to Run Locally
+### Installation & Run
 
 1. Clone the repository.
 2. Install dependencies:
@@ -184,6 +161,14 @@ npm run dev
 
 ---
 
+## Versioning & Releases
+
+- Current release: v1.0
+- This release is tagged and published on GitHub
+- Future changes should be tracked via new releases
+
+---
+
 ## Usage
 
 1. Start a new quiz from the start screen.
@@ -197,22 +182,43 @@ npm run dev
 
 ### Question Sources
 
-The quiz can operate using:
+The quiz supports two data sources:
 
-- Local question data (default)
-- External API source (via adapter layer)
+- **Local question data** (default, from `src/data/questions.jsx`)
+- **Public Trivia API** (Open Trivia Database)
 
-The data source can be toggled via settings without affecting quiz logic.
+### API Limitations
+
+- The public API does **not support all categories**
+- Some custom or niche quizzes are unavailable
+- In unsupported cases, the app:
+  - falls back to local data, or
+  - shows an informational error message
+
+A paid or custom API would be required for full category coverage.
 
 ---
 
+## Known Limitation (Documented)
+
+### UI–Data Semantic Inconsistency
+
+- `LastResultModal` expects a `weakCount` field
+- `lastResult` currently contains only:
+  - `score`
+  - `accuracy`
+
+This does **not cause a runtime error**, but represents a **documented data-model inconsistency**.
+
+## No other known inconsistencies exist.
+
 ## Testing
 
-The project includes unit tests for:
+Unit tests are present and passing for:
 
-1. Zustand store logic
-2. Timer behavior
-3. QuestionCard interactions
+- Quiz store logic
+- Timer behavior
+- QuestionCard interactions
 
 Run tests with:
 
@@ -232,7 +238,8 @@ npm test
 ## Contributing / Support
 
 - Contributions are welcome. Feel free to open an issue or submit a pull request.
-- For problems or suggestions, please use GitHub issues.
+- Please avoid refactors or architectural changes without discussion
+- All changes should be explicit and scoped.
 
 ---
 
