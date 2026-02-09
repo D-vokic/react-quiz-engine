@@ -44,6 +44,29 @@ export const quizSlice = (set, get) => ({
     });
   },
 
+  startRetryWrong: () => {
+    const { weakQuestions } = get();
+    const pool = Object.values(weakQuestions).filter((q) => q.wrong > 0);
+
+    if (!pool.length) return;
+
+    const prepared = shuffle(pool).map((q) => ({
+      id: q.id,
+      question: q.question,
+      answers: q.answers,
+      correctIndex: q.correctIndex,
+    }));
+
+    set({
+      questions: prepared,
+      answersLog: [],
+      currentIndex: 0,
+      score: 0,
+      status: "quiz",
+      mode: "retry",
+    });
+  },
+
   startQuizFromApi: async () => {
     const { category, questionLimit } = get();
 
@@ -100,7 +123,8 @@ export const quizSlice = (set, get) => ({
   },
 
   answerQuestion: (isCorrect, selectedIndex) => {
-    const { currentIndex, questions, score, answersLog, weakQuestions } = get();
+    const { currentIndex, questions, score, answersLog, weakQuestions, mode } =
+      get();
     const q = questions[currentIndex];
 
     const newLog = [
@@ -117,6 +141,16 @@ export const quizSlice = (set, get) => ({
     const newScore = isCorrect ? score + 1 : score;
 
     if (nextIndex >= questions.length) {
+      if (mode === "retry") {
+        set({
+          score: newScore,
+          answersLog: newLog,
+          status: "result",
+          mode: "normal",
+        });
+        return;
+      }
+
       const accuracy = Math.round((newScore / questions.length) * 100);
       const weakCount = Object.keys(weakQuestions || {}).length;
 
