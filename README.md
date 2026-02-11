@@ -48,6 +48,50 @@ This version serves as a **stable baseline** for future controlled development.
 
 ---
 
+## Roadmap
+
+### Upcoming Release – v1.2 (Quality & Stability Hardening)
+
+Planned scope:
+
+#### Weak Question Tracking Improvements
+
+- Ensure consistent accumulation of `weakQuestions`
+- Verify retry cleanup behavior
+- Add dedicated unit tests
+
+#### Retry Mode Integration Tests
+
+- Full retry flow coverage
+- Validate mode transitions (`normal` → `retry` → `normal`)
+- Ensure `lastResult` is not overwritten during retry
+
+#### Edge-Case Hardening
+
+- Guard against empty question pools
+- Protect against corrupted `localStorage`
+- Validate difficulty/category edge cases
+
+#### Accessibility Improvements
+
+- Add ARIA labels to icon buttons and modal
+- ESC to close modal
+- Improved keyboard interaction support
+- No visual redesign
+
+#### Performance Review
+
+- Audit Zustand state updates
+- Remove redundant `localStorage` writes
+- Prevent unnecessary re-renders
+
+#### Documentation Alignment
+
+- Expand retry flow documentation
+- Minor architectural clarity updates
+
+---
+
 ## Features
 
 ### Core Quiz Flow
