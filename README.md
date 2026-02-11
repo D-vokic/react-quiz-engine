@@ -2,7 +2,7 @@
 
 A modern, feature-complete **client-side quiz application built with React**, focused on clean architecture, predictable state management, and verified implementation quality.
 
-This repository represents **v1.0 – the first stable release**, after full structural and deep code verification.
+This repository represents **v1.1 – Data Consistency & UX Polish**, following the initial stable release.
 
 ---
 
@@ -16,6 +16,35 @@ This repository represents **v1.0 – the first stable release**, after full str
 - No backend / deployment configuration
 
 This version serves as a **stable baseline** for future controlled development.
+
+---
+
+## What changed in v1.1
+
+### Data Consistency
+
+- `lastResult` data model aligned
+- `weakCount` is now consistently defined and populated
+- Removed documented UI–data semantic inconsistency
+
+### Retry Mode Logic
+
+- Explicit entry condition via `startRetryWrong`
+- Explicit exit condition (automatic reset to `normal` mode on completion)
+- Retry state behavior is now clearly defined and predictable
+
+### Test Coverage
+
+- Added tests for:
+  - `lastResult` structure validation
+  - `LastResultModal` rendering
+- Strengthened results-related test coverage
+
+### UX Polish
+
+- Label and indicator consistency reviewed
+- No flow changes
+- No refactors
 
 ---
 
@@ -122,8 +151,9 @@ src/
 ├─ main.jsx
 └─ App.jsx
 
-```
 All files and folders above were **explicitly reviewed and verified**.
+
+```
 
 State management is split into dedicated Zustand slices:
 
@@ -162,8 +192,9 @@ npm run dev
 
 ## Versioning & Releases
 
-- Current release: v1.0
-- This release is tagged and published on GitHub
+- Current release: v1.1
+- Previous stable baseline: v1.0
+- Releases are tagged and published on GitHub
 - Future changes should be tracked via new releases
 
 ---
@@ -198,19 +229,6 @@ A paid or custom API would be required for full category coverage.
 
 ---
 
-## Known Limitation (Documented)
-
-### UI–Data Semantic Inconsistency
-
-- `LastResultModal` expects a `weakCount` field
-- `lastResult` currently contains only:
-  - `score`
-  - `accuracy`
-
-This does **not cause a runtime error**, but represents a **documented data-model inconsistency**.
-
-## No other known inconsistencies exist.
-
 ## Testing
 
 Unit tests are present and passing for:
@@ -218,6 +236,8 @@ Unit tests are present and passing for:
 - Quiz store logic
 - Timer behavior
 - QuestionCard interactions
+- lastResult structure
+- LastResultModal rendering
 
 Run tests with:
 
