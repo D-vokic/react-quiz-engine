@@ -140,6 +140,25 @@ export const quizSlice = (set, get) => ({
     const nextIndex = currentIndex + 1;
     const newScore = isCorrect ? score + 1 : score;
 
+    if (!isCorrect && mode === "normal") {
+      const updatedWeak = {
+        ...(weakQuestions || {}),
+        [q.id]: {
+          id: q.id,
+          question: q.question,
+          answers: q.answers,
+          correctIndex: q.correctIndex,
+          wrong: ((weakQuestions && weakQuestions[q.id]?.wrong) || 0) + 1,
+        },
+      };
+
+      localStorage.setItem("weakQuestions", JSON.stringify(updatedWeak));
+
+      set({
+        weakQuestions: updatedWeak,
+      });
+    }
+
     if (nextIndex >= questions.length) {
       if (mode === "retry") {
         set({
@@ -152,7 +171,7 @@ export const quizSlice = (set, get) => ({
       }
 
       const accuracy = Math.round((newScore / questions.length) * 100);
-      const weakCount = Object.keys(weakQuestions || {}).length;
+      const weakCount = Object.keys(get().weakQuestions || {}).length;
 
       const lastResult = { score: newScore, accuracy, weakCount };
 
