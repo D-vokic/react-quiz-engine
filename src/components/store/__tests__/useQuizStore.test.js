@@ -107,6 +107,28 @@ describe("useQuizStore – results", () => {
     expect(s.lastResult.score).toBe(5);
     expect(s.lastResult.accuracy).toBe(80);
   });
+
+  it("full retry flow: finish quiz → retry wrong → complete retry → result", () => {
+    useQuizStore.getState().answerQuestion(false, 1);
+
+    let s = useQuizStore.getState();
+    expect(s.status).toBe("result");
+    expect(Object.keys(s.weakQuestions).length).toBe(1);
+
+    useQuizStore.getState().startRetryWrong();
+
+    s = useQuizStore.getState();
+    expect(s.mode).toBe("retry");
+    expect(s.status).toBe("quiz");
+    expect(s.questions.length).toBe(1);
+
+    useQuizStore.getState().answerQuestion(true, 0);
+
+    s = useQuizStore.getState();
+    expect(s.status).toBe("result");
+    expect(s.mode).toBe("normal");
+    expect(Object.keys(s.weakQuestions).length).toBe(0);
+  });
 });
 
 describe("LastResultModal rendering", () => {
