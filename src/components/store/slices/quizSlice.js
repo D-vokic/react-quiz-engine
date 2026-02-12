@@ -161,9 +161,17 @@ export const quizSlice = (set, get) => ({
 
     if (nextIndex >= questions.length) {
       if (mode === "retry") {
+        const remainingWeak = { ...(weakQuestions || {}) };
+
+        if (isCorrect && remainingWeak[q.id]) {
+          delete remainingWeak[q.id];
+          localStorage.setItem("weakQuestions", JSON.stringify(remainingWeak));
+        }
+
         set({
           score: newScore,
           answersLog: newLog,
+          weakQuestions: remainingWeak,
           status: "result",
           mode: "normal",
         });

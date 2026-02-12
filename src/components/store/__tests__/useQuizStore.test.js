@@ -77,6 +77,21 @@ describe("useQuizStore – results", () => {
     expect(Object.keys(s.weakQuestions).length).toBe(1);
   });
 
+  it("removes question from weakQuestions after successful retry", () => {
+    useQuizStore.setState({
+      mode: "retry",
+    });
+
+    useQuizStore.getState().answerQuestion(true, 0);
+
+    const s = useQuizStore.getState();
+
+    expect(s.weakQuestions.q1).toBeUndefined();
+    expect(Object.keys(s.weakQuestions).length).toBe(0);
+    expect(s.mode).toBe("normal");
+    expect(s.status).toBe("result");
+  });
+
   it("completes retry mode and resets to normal without overwriting lastResult", () => {
     useQuizStore.setState({
       mode: "retry",
