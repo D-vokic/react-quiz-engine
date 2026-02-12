@@ -20,9 +20,15 @@ function SettingsModal({ onClose }) {
   const resetStatistics = useQuizStore((s) => s.resetStatistics);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div
+      className="modal-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-modal-title"
+    >
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h3>Settings</h3>
+        <h3 id="settings-modal-title">Settings</h3>
 
         <SettingsSection>
           <ToggleRow

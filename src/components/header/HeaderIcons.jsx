@@ -28,6 +28,8 @@ function HeaderIcons({
       <div
         className={`icon-indicator ${soundEnabled ? "active" : ""}`}
         title="Sound"
+        role="img"
+        aria-label={soundEnabled ? "Sound enabled" : "Sound disabled"}
       >
         {soundEnabled ? "🔊" : "🔇"}
       </div>
@@ -35,15 +37,27 @@ function HeaderIcons({
       <div
         className={`icon-indicator ${timerEnabled ? "active" : ""}`}
         title="Timer"
+        role="img"
+        aria-label={timerEnabled ? "Timer enabled" : "Timer disabled"}
       >
         ⏱
       </div>
 
-      <button className="icon-btn" onClick={toggleTheme}>
+      <button
+        className="icon-btn"
+        onClick={toggleTheme}
+        aria-label={
+          theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+        }
+      >
         {theme === "dark" ? "🌙" : "☀️"}
       </button>
 
-      <button className="icon-btn" onClick={onOpenSettings}>
+      <button
+        className="icon-btn"
+        onClick={onOpenSettings}
+        aria-label="Open settings"
+      >
         ⚙️
       </button>
     </div>
