@@ -28,10 +28,30 @@ export const quizSlice = (set, get) => ({
 
   startQuiz: () => {
     const { category, difficulty, questionLimit } = get();
-    if (!category) return;
+    if (!category || !difficulty) return;
 
-    const pool = localQuestions[category][difficulty];
-    const prepared = shuffle(pool).slice(0, questionLimit);
+    const categoryData = localQuestions?.[category];
+    const pool = categoryData?.[difficulty];
+
+    if (!Array.isArray(pool) || pool.length === 0) {
+      set({
+        questions: [],
+        answersLog: [],
+        currentIndex: 0,
+        score: 0,
+        status: "start",
+        mode: "normal",
+        error: "No questions available for selected category/difficulty",
+      });
+      return;
+    }
+
+    const limit =
+      typeof questionLimit === "number" && questionLimit > 0
+        ? questionLimit
+        : pool.length;
+
+    const prepared = shuffle(pool).slice(0, limit);
 
     set({
       questions: prepared,
@@ -46,7 +66,10 @@ export const quizSlice = (set, get) => ({
 
   startRetryWrong: () => {
     const { weakQuestions } = get();
-    const pool = Object.values(weakQuestions).filter((q) => q.wrong > 0);
+
+    if (!weakQuestions || typeof weakQuestions !== "object") return;
+
+    const pool = Object.values(weakQuestions).filter((q) => q && q.wrong > 0);
 
     if (!pool.length) return;
 
@@ -70,7 +93,7 @@ export const quizSlice = (set, get) => ({
   startQuizFromApi: async () => {
     const { category, questionLimit } = get();
 
-    const apiCategory = API_CATEGORY_MAP[category];
+    const apiCategory = API_CATEGORY_MAP?.[category];
     if (!apiCategory) {
       set({
         error: "Selected quiz is not supported by API",
@@ -87,21 +110,23 @@ export const quizSlice = (set, get) => ({
 
       const data = await res.json();
 
-      if (!data.results || !data.results.length) {
+      if (
+        !data?.results ||
+        !Array.isArray(data.results) ||
+        !data.results.length
+      ) {
         throw new Error();
       }
 
       const adapted = data.results.map((q, idx) => {
-        const answers = shuffle([
-          ...q.incorrect_answers.map(decode),
-          decode(q.correct_answer),
-        ]);
+        const correct = decode(q.correct_answer);
+        const answers = shuffle([...q.incorrect_answers.map(decode), correct]);
 
         return {
           id: `api-${idx}-${Date.now()}`,
           question: decode(q.question),
           answers,
-          correctIndex: answers.indexOf(decode(q.correct_answer)),
+          correctIndex: answers.indexOf(correct),
         };
       });
 
@@ -125,6 +150,9 @@ export const quizSlice = (set, get) => ({
   answerQuestion: (isCorrect, selectedIndex) => {
     const { currentIndex, questions, score, answersLog, weakQuestions, mode } =
       get();
+
+    if (!Array.isArray(questions) || !questions[currentIndex]) return;
+
     const q = questions[currentIndex];
 
     const newLog = [
@@ -140,15 +168,18 @@ export const quizSlice = (set, get) => ({
     const nextIndex = currentIndex + 1;
     const newScore = isCorrect ? score + 1 : score;
 
+    const safeWeak =
+      weakQuestions && typeof weakQuestions === "object" ? weakQuestions : {};
+
     if (!isCorrect && mode === "normal") {
       const updatedWeak = {
-        ...(weakQuestions || {}),
+        ...safeWeak,
         [q.id]: {
           id: q.id,
           question: q.question,
           answers: q.answers,
           correctIndex: q.correctIndex,
-          wrong: ((weakQuestions && weakQuestions[q.id]?.wrong) || 0) + 1,
+          wrong: (safeWeak[q.id]?.wrong || 0) + 1,
         },
       };
 
@@ -161,7 +192,7 @@ export const quizSlice = (set, get) => ({
 
     if (nextIndex >= questions.length) {
       if (mode === "retry") {
-        const remainingWeak = { ...(weakQuestions || {}) };
+        const remainingWeak = { ...safeWeak };
 
         if (isCorrect && remainingWeak[q.id]) {
           delete remainingWeak[q.id];
@@ -178,8 +209,9 @@ export const quizSlice = (set, get) => ({
         return;
       }
 
-      const accuracy = Math.round((newScore / questions.length) * 100);
-      const weakCount = Object.keys(get().weakQuestions || {}).length;
+      const total = questions.length || 1;
+      const accuracy = Math.round((newScore / total) * 100);
+      const weakCount = Object.keys(safeWeak).length;
 
       const lastResult = { score: newScore, accuracy, weakCount };
 
