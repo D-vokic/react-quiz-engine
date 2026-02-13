@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useQuizStore } from "../store/useQuizStore.jsx";
 
 import HeaderTitle from "./HeaderTitle";
@@ -16,10 +16,14 @@ function Header({ onOpenSettings }) {
 
   const [showLast, setShowLast] = useState(false);
 
-  const handleShowLast = () => {
+  const handleShowLast = useCallback(() => {
     if (!lastResult) return;
     setShowLast(true);
-  };
+  }, [lastResult]);
+
+  const handleCloseLast = useCallback(() => {
+    setShowLast(false);
+  }, []);
 
   return (
     <header className="header">
@@ -40,10 +44,7 @@ function Header({ onOpenSettings }) {
       </div>
 
       {lastResult && showLast && (
-        <LastResultModal
-          result={lastResult}
-          onClose={() => setShowLast(false)}
-        />
+        <LastResultModal result={lastResult} onClose={handleCloseLast} />
       )}
     </header>
   );
