@@ -39,7 +39,40 @@ describe("QuestionCard", () => {
 
     expect(useQuizStore.getState().answerQuestion).toHaveBeenCalledWith(
       true,
-      1
+      1,
     );
+  });
+
+  it("happy path: start quiz → answer → finish → result visible", () => {
+    const mockAnswer = vi.fn();
+
+    useQuizStore.setState({
+      status: "quiz",
+      mode: "normal",
+      currentIndex: 0,
+      questions: [
+        {
+          id: "q1",
+          question: "Test pitanje?",
+          answers: ["A", "B"],
+          correctIndex: 1,
+        },
+      ],
+      soundEnabled: false,
+      timerEnabled: false,
+      timePerQuestion: 10,
+      answerQuestion: mockAnswer,
+      restart: vi.fn(),
+    });
+
+    render(<QuestionCard />);
+
+    expect(screen.getByText("Test pitanje?")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("B"));
+
+    vi.advanceTimersByTime(600);
+
+    expect(mockAnswer).toHaveBeenCalledWith(true, 1);
   });
 });
