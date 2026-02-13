@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuizStore } from "../store/useQuizStore.jsx";
 
 import ToggleRow from "./ToggleRow";
@@ -18,6 +19,25 @@ function SettingsModal({ onClose }) {
   const setQuestionLimit = useQuizStore((s) => s.setQuestionLimit);
   const setDifficulty = useQuizStore((s) => s.setDifficulty);
   const resetStatistics = useQuizStore((s) => s.resetStatistics);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+      if (e.key === "Enter") {
+        const active = document.activeElement;
+        if (active && active.tagName === "BUTTON") {
+          active.click();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
 
   return (
     <div
