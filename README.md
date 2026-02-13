@@ -1,8 +1,8 @@
 # React Quiz Engine
 
-A modern, feature-complete **client-side quiz application built with React**, focused on clean architecture, predictable state management, and verified implementation quality.
+A modern, feature-complete **client-side quiz application built with React**, focused on clean architecture, predictable state management, verified implementation quality, and controlled incremental hardening.
 
-This repository represents **v1.1 – Data Consistency & UX Polish**, following the initial stable release.
+This repository now represents **v1.2 – Quality & Stability Hardening**.
 
 ---
 
@@ -10,135 +10,101 @@ This repository represents **v1.1 – Data Consistency & UX Polish**, following 
 
 - Feature complete
 - Structurally verified
-- Implementation fully reviewed
-- Stable (no runtime-blocking issues)
-- Unit tests passing
-- No backend / deployment configuration
+- Architecture aligned with internal context document
+- Accessibility improvements implemented (non-visual)
+- Performance audited
+- Unit and integration tests passing
+- Basic happy-path smoke test coverage added
+- No backend / no server-side persistence
 
-This version serves as a **stable baseline** for future controlled development.
-
----
-
-## What changed in v1.1
-
-### Data Consistency
-
-- `lastResult` data model aligned
-- `weakCount` is now consistently defined and populated
-- Removed documented UI–data semantic inconsistency
-
-### Retry Mode Logic
-
-- Explicit entry condition via `startRetryWrong`
-- Explicit exit condition (automatic reset to `normal` mode on completion)
-- Retry state behavior is now clearly defined and predictable
-
-### Test Coverage
-
-- Added tests for:
-  - `lastResult` structure validation
-  - `LastResultModal` rendering
-- Strengthened results-related test coverage
-
-### UX Polish
-
-- Label and indicator consistency reviewed
-- No flow changes
-- No refactors
+This version serves as a **stable, hardened baseline** for future controlled development.
 
 ---
 
-## Roadmap
+## What changed in v1.2
 
-### Upcoming Release – v1.2 (Quality & Stability Hardening)
+### Weak Question Tracking Improvements
 
-Planned scope:
+- Consistent `weakQuestions` accumulation
+- Deterministic retry cleanup behavior
+- Guarded against corrupted `weakQuestions` state
+- Dedicated unit tests added
 
-#### Weak Question Tracking Improvements
+### Retry Mode Integration Tests
 
-- Ensure consistent accumulation of `weakQuestions`
-- Verify retry cleanup behavior
-- Add dedicated unit tests
+- Full retry flow covered:
+  - finish quiz → retry wrong → complete retry → result
+- Validated mode transitions (`normal` → `retry` → `normal`)
+- Ensured `lastResult` is never overwritten during retry
 
-#### Retry Mode Integration Tests
+### Edge-Case Hardening
 
-- Full retry flow coverage
-- Validate mode transitions (`normal` → `retry` → `normal`)
-- Ensure `lastResult` is not overwritten during retry
+- Empty question pools handled safely
+- Invalid category/difficulty combinations guarded
+- Corrupted `localStorage` parsing hardened in `statsSlice`
+- Defensive guards added in `quizSlice`
+- No silent crashes allowed
 
-#### Edge-Case Hardening
+### Accessibility Improvements (Non-Visual)
 
-- Guard against empty question pools
-- Protect against corrupted `localStorage`
-- Validate difficulty/category edge cases
-
-#### Accessibility Improvements
-
-- Add ARIA labels to icon buttons and modal
-- ESC to close modal
-- Improved keyboard interaction support
+- ARIA labels added to:
+  - Icon-only buttons
+  - Modal overlay
+- ESC closes modal
+- Enter confirms focused button action
 - No visual redesign
 
-#### Performance Review
+### Performance & Cleanup
 
-- Audit Zustand state updates
-- Remove redundant `localStorage` writes
-- Prevent unnecessary re-renders
+- Audited Zustand state updates for minimal mutation
+- Removed unnecessary function recreation in header
+- Verified no redundant `localStorage` writes
+- Prevented unnecessary header re-renders
+- No behavioral changes introduced
 
-#### Documentation Alignment
+### Testing Improvements
 
-- Expand retry flow documentation
-- Minor architectural clarity updates
+- Strengthened unit coverage
+- Retry integration coverage added
+- Basic happy-path smoke test:
+  - Start quiz → answer → finish → result
 
 ---
 
-## Features
+## Core Features
 
-### Core Quiz Flow
+### Quiz Flow
 
-- Start → questions → results
+- Start → questions → result
 - Multiple-choice questions
-- Score and accuracy calculation
-- Result screen at quiz completion
+- Score & accuracy calculation
+- Result screen on completion
+- Deterministic retry mode
 
 ### Settings & Configuration
 
 - Difficulty selection (easy / normal / hard)
 - Question count per quiz
-- Sound on / off
-- Timer on / off
-- Time per question (range-based)
+- Sound toggle
+- Timer toggle
+- Adjustable time per question
 
 ### UX Enhancements
 
 - Progress bar
-- Per-question timer with automatic timeout
+- Per-question timer
 - Streak indicator
-- Last result preview modal
-- Light / Dark theme with persistence
-
-### Sound & Media
-
-- Optional sound effects:
-  - click
-  - correct
-  - wrong
-  - finish
+- Last result modal
+- Light / Dark theme (persistent)
 
 ### Statistics
 
-- Best score
-- Accuracy tracking
-- Difficulty-based stats
+- Best score tracking
+- Accuracy calculation
+- Difficulty-based statistics
 - Streak tracking
-- Last result persistence
-
----
-
-## Demo
-
-Live demo (if available):  
-https://react-quiz-engine.netlify.app/
+- Persistent last result
+- Weak question tracking
 
 ---
 
@@ -150,65 +116,91 @@ https://react-quiz-engine.netlify.app/
 - Vite
 - Zustand
 - JavaScript (ES6+)
-- localStorage (settings & statistics)
+- localStorage (validated & hardened)
 
-### State Management
+---
 
-Global state is centralized in a **single Zustand store**, composed of isolated slices:
+## Architecture Diagram (High-Level)
 
-- `uiSlice` – UI state (status, theme, mode)
-- `settingsSlice` – user-configurable settings (persistent)
-- `quizSlice` – quiz flow and logic
+             ┌────────────────────┐
+             │      React UI      │
+             │--------------------│
+             │ Header / Question  │
+             │ Settings / Modals  │
+             │ Progress / Footer  │
+             └─────────┬──────────┘
+                       │
+                       ▼
+             ┌────────────────────┐
+             │   useQuizStore     │
+             │  (Zustand Store)   │
+             └─────────┬──────────┘
+                       │
+    ┌──────────────────┼──────────────────┐
+    ▼                  ▼                  ▼
+
+quizSlice settingsSlice statsSlice
+(quiz flow) (user config) (history,
+persistence)
+
+                       ▼
+                    uiSlice
+                (UI flags / modals)
+
+### Architectural Principles
+
+- Single source of truth: `useQuizStore`
+- Slice isolation (no accidental cross-mutation)
+- Retry mode as controlled state machine extension
+- localStorage treated as non-trustworthy input
+- Deterministic state transitions only
+- No silent runtime crashes
+
+---
+
+## State Structure
+
+Global state is composed of isolated slices:
+
+- `quizSlice` – quiz flow logic
+- `settingsSlice` – user-configurable options
 - `statsSlice` – statistics and historical data
+- `uiSlice` – UI flags and modal control
 
-All cross-domain state flows through `useQuizStore`.
+All state transitions are explicit and validated.
 
 ---
 
 ## Project Structure
 
-The project follows a feature-based folder structure:
-
 ```
-
 src/
 ├─ components/
-│  ├─ header/
-│  ├─ footer/
-│  ├─ question/
-│  ├─ settings/
-│  ├─ progress/
-│  ├─ pages/
-├─ store/
-│  ├─ slices/
-│  │  ├─ quizSlice.js
-│  │  ├─ settingsSlice.js
-│  │  ├─ statsSlice.js
-│  │  └─ uiSlice.js
-│  └─ useQuizStore.jsx
+│ ├─ header/
+│ ├─ footer/
+│ ├─ question/
+│ │ └─ tests/
+│ ├─ settings/
+│ ├─ progress/
+│ ├─ pages/
+│ └─ store/
+│ ├─ slices/
+│ └─ tests/
 ├─ styles/
-│  ├─ base/
-│  ├─ layout/
-│  ├─ components/
-│  └─ index.css
+│ ├─ base/
+│ ├─ layout/
+│ ├─ components/
 ├─ utils/
-├─ main.jsx
-└─ App.jsx
-
-All files and folders above were **explicitly reviewed and verified**.
+├─ App.jsx
+└─ main.jsx
 
 ```
 
-State management is split into dedicated Zustand slices:
-
-- UI
-- Settings
-- Quiz logic
-- Statistics
+All directories are explicitly verified.
 
 ---
 
-### Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -217,16 +209,13 @@ State management is split into dedicated Zustand slices:
 
 ---
 
-### Installation & Run
+### Installation
 
-1. Clone the repository.
-2. Install dependencies:
-
-```Bash
+```bash
 npm install
 ```
 
-3. Start the development server:
+Start the development server:
 
 ```Bash
 npm run dev
@@ -236,54 +225,32 @@ npm run dev
 
 ## Versioning & Releases
 
-- Current release: v1.1
-- Previous stable baseline: v1.0
-- Releases are tagged and published on GitHub
-- Future changes should be tracked via new releases
-
----
-
-## Usage
-
-1. Start a new quiz from the start screen.
-2. Answer questions manually or let the timer expire.
-3. Track progress using the progress bar.
-4. Open settings to adjust quiz behavior.
-5. View results and statistics at the end of the quiz.
-6. Retry incorrect questions to improve performance.
-
----
-
-### Question Sources
-
-The quiz supports two data sources:
-
-- **Local question data** (default, from `src/data/questions.jsx`)
-- **Public Trivia API** (Open Trivia Database)
-
-### API Limitations
-
-- The public API does **not support all categories**
-- Some custom or niche quizzes are unavailable
-- In unsupported cases, the app:
-  - falls back to local data, or
-  - shows an informational error message
-
-A paid or custom API would be required for full category coverage.
+- Current release: v1.2
+- Previous stable baseline: v1.1
+- Controlled incremental releases
+- No uncontrolled refactors
 
 ---
 
 ## Testing
 
-Unit tests are present and passing for:
+Unit and integration tests are implemented at:
 
-- Quiz store logic
+- Store level
+- Component level
+
+Covered areas:
+
+- Quiz flow logic
 - Timer behavior
-- QuestionCard interactions
-- lastResult structure
-- LastResultModal rendering
+- Retry mode transitions
+- weakQuestions handling
+- lastResult structure validation
+- Modal rendering
+- QuestionCard interaction
+- Basic happy-path smoke test
 
-Run tests with:
+Run tests:
 
 ```Bash
 npm test
@@ -298,11 +265,31 @@ npm test
 
 ---
 
+## Question Sources
+
+Two supported data sources:
+
+1. Local question data (src/data/questions.jsx)
+2. Public Trivia API (Open Trivia Database)
+
+If API category is unsupported:
+
+- Error is handled gracefully
+- No crash occurs
+
+---
+
 ## Contributing / Support
 
-- Contributions are welcome. Feel free to open an issue or submit a pull request.
-- Please avoid refactors or architectural changes without discussion
-- All changes should be explicit and scoped.
+- Avoid architectural refactors without discussion
+- Maintain slice isolation
+- Preserve invariants:
+  - Stable lastResult structure
+  - Retry mode isolation
+  - Safe localStorage parsing
+  - No state corruption
+
+- All changes must be deterministic
 
 ---
 
