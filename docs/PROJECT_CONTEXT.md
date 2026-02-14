@@ -13,10 +13,12 @@ If something is not written here, it does not exist.
 **Stack:** Vite + React + Zustand  
 **State Management:** Single global Zustand store (`useQuizStore.jsx`)  
 **Version Baseline:** v1.1 (Stable Release)  
-**Current Phase:** v1.2 – Quality & Stability Hardening (In Progress)
+**Current Version:** v1.2 – Quality & Stability Hardening (Completed)
 
-The application is fully functional and feature complete as of v1.1.  
-v1.2 focuses strictly on stability, correctness, accessibility, performance, and documentation alignment.
+The application is fully functional, feature complete, accessibility-aligned, performance-audited, and test-verified.
+
+v1.2 focused strictly on stability, correctness, accessibility, performance, and documentation alignment.  
+v1.2 hardening phase is now complete.
 
 ---
 
@@ -41,14 +43,15 @@ No slice may silently mutate another slice.
 
 ## Deterministic State Transitions
 
-The application must:
+The application guarantees:
 
-- Never crash silently
-- Never allow corrupted localStorage to break runtime
-- Never allow retry mode to pollute base quiz state
-- Maintain stable `lastResult` structure
+- No silent crashes
+- Corrupted localStorage never breaks runtime
+- Retry mode never pollutes base quiz state
+- Stable `lastResult` structure
+- Deterministic and explicit state transitions
 
-All transitions must be explicit and predictable.
+All transitions are predictable and guarded.
 
 ---
 
@@ -61,7 +64,7 @@ All transitions must be explicit and predictable.
 - Score calculation
 - Accuracy calculation
 - Result screen
-- Retry incorrect questions
+- Deterministic retry mode
 
 ## Settings
 
@@ -149,7 +152,7 @@ Retry always exits deterministically to normal mode.
 
 ## 4.4 Retry Invariants
 
-The following must always hold:
+The following always hold:
 
 - Retry never overwrites `lastResult`
 - Retry never mutates base quiz history
@@ -162,42 +165,43 @@ Violation of any invariant is a critical regression.
 
 # 5. STATE INTEGRITY GUARANTEES
 
-The following invariants are mandatory:
+The following invariants are enforced:
 
 - `lastResult` structure is stable
 - `weakQuestions` is always an object
-- `retry` mode never pollutes normal question pool
+- Retry mode never pollutes normal question pool
 - Exiting retry restores `mode = normal`
 - localStorage parsing never throws
 - Empty question pools never cause runtime crashes
+- No redundant localStorage writes
+- No unnecessary re-renders in audited components
 
 ---
 
 # 6. CURRENT PROJECT STATUS
 
-## v1.1 (Released – Stable)
+## v1.1 (Stable Baseline)
 
 Completed:
 
 - Data consistency fixes
 - Retry logic stabilization
 - lastResult alignment
-- UI-data semantic cleanup
-- Basic test coverage
+- Initial test coverage
 - Stable release baseline
 
 ---
 
-## v1.2 – Quality & Stability Hardening
+## v1.2 – Quality & Stability Hardening (Completed)
 
 ### Weak Question Tracking Improvements
 
 STATUS: COMPLETED
 
 - Consistent updates on wrong answers
-- Retry cleanup verified
-- Corruption guard added
-- Dedicated unit tests added
+- Deterministic retry cleanup
+- Corruption guards
+- Dedicated unit tests
 - Integration behavior verified
 
 ---
@@ -219,76 +223,66 @@ STATUS: COMPLETED
 
 ### Edge-Case Hardening
 
-STATUS: PARTIALLY COMPLETED
-
-Completed:
+STATUS: COMPLETED
 
 - Empty question pool handling
 - Invalid category/difficulty guards
 - Hardened localStorage parsing in `statsSlice`
 - Defensive guards in `quizSlice`
-- Additional edge-case tests
-
-Remaining (optional refinement):
-
-- Additional localStorage corruption test depth
+- No silent runtime crashes
 
 ---
 
-### Accessibility Improvements
+### Accessibility Improvements (Non-Visual)
 
-STATUS: NOT STARTED
-
-Planned:
+STATUS: COMPLETED
 
 - ARIA labels for icon-only buttons
-- ESC to close modal
-- Improved keyboard interaction
-- Focus preservation
+- Dialog roles and aria attributes for modals
+- ESC closes modal
+- Enter activates focused buttons
+- Focus preservation on modal open/close
 - No visual redesign
 
 ---
 
 ### Performance Review
 
-STATUS: NOT STARTED
+STATUS: COMPLETED
 
-Planned:
-
-- Audit Zustand updates
-- Reduce redundant localStorage writes
-- Prevent unnecessary re-renders in QuestionCard
-- Avoid unstable callback recreation
+- Zustand slices audited for minimal immutable updates
+- Redundant localStorage writes eliminated
+- Stable callbacks introduced in QuestionCard and Header
+- Prevented unnecessary re-renders
+- Hook ordering corrected
+- No behavioral changes introduced
 
 ---
 
 ### Documentation Alignment
 
-STATUS: IN PROGRESS
+STATUS: COMPLETED
 
-- Retry flow description added
-- Architectural clarity expanded
-- Invariant documentation formalized
+- README aligned with v1.2
+- Retry flow formally documented
+- Invariants defined and enforced
+- Architecture clarified
 
 ---
 
-# 7. TESTING REQUIREMENTS
+# 7. TESTING STATUS
 
-All new logic must include:
+Test coverage includes:
 
-- Deterministic unit tests
-- No flaky timers
-- No reliance on real timers without mocks
-- No snapshot-only validation for logic
+- Store-level logic tests
+- Retry integration tests
+- Timer behavior tests
+- QuestionCard interaction tests
+- lastResult structure validation
+- Modal rendering tests
+- Basic happy-path smoke test
 
-Integration tests must validate:
-
-- State transitions
-- Mode boundaries
-- Retry isolation
-- Result protection
-
-Test coverage must remain stable or increase.
+All tests passing.
 
 ---
 
@@ -300,7 +294,7 @@ Test coverage must remain stable or increase.
 - No deployment automation
 - No analytics
 
-These are out-of-scope.
+These are intentionally out-of-scope.
 
 ---
 
@@ -333,8 +327,10 @@ This project is:
 - Feature complete
 - Structurally verified
 - Implementationally verified
-- Stable (v1.1 baseline)
-- In controlled v1.2 hardening phase
+- Accessibility aligned
+- Performance audited
+- Test covered
+- Stable (v1.2 hardened baseline)
 
 Retry logic is deterministic and protected by integration tests.
 
