@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useQuizStore } from "../store/useQuizStore.jsx";
 
 import QuizTopBar from "./QuizTopBar.jsx";
@@ -20,37 +20,43 @@ function QuestionCard() {
 
   const [selected, setSelected] = useState(null);
 
+  const handleTimeout = useCallback(() => {
+    answerQuestion(false, null);
+  }, [answerQuestion]);
+
+  const { playClick, playCorrect, playWrong, audioElements } =
+    useSounds(soundEnabled);
+
+  const current = questions[currentIndex];
+
+  const handleAnswer = useCallback(
+    (index) => {
+      if (!current || selected !== null) return;
+
+      setSelected(index);
+      playClick();
+
+      const isCorrect = index === current.correctIndex;
+      isCorrect ? playCorrect() : playWrong();
+
+      setTimeout(() => {
+        answerQuestion(isCorrect, index);
+        setSelected(null);
+      }, 600);
+    },
+    [selected, current, playClick, playCorrect, playWrong, answerQuestion],
+  );
+
   const timeLeft = useQuestionTimer({
     enabled: timerEnabled,
     mode,
     timePerQuestion,
     currentIndex,
-    onTimeout: () => answerQuestion(false, null),
+    onTimeout: handleTimeout,
   });
 
-  const { playClick, playCorrect, playWrong, audioElements } =
-    useSounds(soundEnabled);
-
   if (!questions.length) return null;
-
-  const current = questions[currentIndex];
-
   if (!current) return null;
-
-  const handleAnswer = (index) => {
-    if (selected !== null) return;
-
-    setSelected(index);
-    playClick();
-
-    const isCorrect = index === current.correctIndex;
-    isCorrect ? playCorrect() : playWrong();
-
-    setTimeout(() => {
-      answerQuestion(isCorrect, index);
-      setSelected(null);
-    }, 600);
-  };
 
   return (
     <div className="question">
