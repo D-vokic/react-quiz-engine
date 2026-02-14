@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useQuizStore } from "../store/useQuizStore.jsx";
 
 import ToggleRow from "./ToggleRow";
@@ -20,7 +20,15 @@ function SettingsModal({ onClose }) {
   const setDifficulty = useQuizStore((s) => s.setDifficulty);
   const resetStatistics = useQuizStore((s) => s.resetStatistics);
 
+  const modalRef = useRef(null);
+  const previousFocusRef = useRef(null);
+
   useEffect(() => {
+    previousFocusRef.current = document.activeElement;
+    if (modalRef.current) {
+      modalRef.current.focus();
+    }
+
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
         onClose();
@@ -34,8 +42,12 @@ function SettingsModal({ onClose }) {
     };
 
     document.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      if (previousFocusRef.current && previousFocusRef.current.focus) {
+        previousFocusRef.current.focus();
+      }
     };
   }, [onClose]);
 
@@ -47,7 +59,12 @@ function SettingsModal({ onClose }) {
       aria-modal="true"
       aria-labelledby="settings-modal-title"
     >
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modal"
+        ref={modalRef}
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+      >
         <h3 id="settings-modal-title">Settings</h3>
 
         <SettingsSection>
