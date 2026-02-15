@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export function useQuestionTimer({
   enabled,
@@ -8,16 +8,18 @@ export function useQuestionTimer({
   onTimeout,
 }) {
   const [timeLeft, setTimeLeft] = useState(timePerQuestion);
+  const timeoutFiredRef = useRef(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTimeLeft(timePerQuestion);
+    timeoutFiredRef.current = false;
   }, [currentIndex, timePerQuestion]);
 
   useEffect(() => {
     if (!enabled || mode === "retry") return;
+    if (timeoutFiredRef.current) return;
 
     if (timeLeft <= 0) {
+      timeoutFiredRef.current = true;
       onTimeout();
       return;
     }

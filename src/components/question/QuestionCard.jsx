@@ -21,8 +21,9 @@ function QuestionCard() {
   const [selected, setSelected] = useState(null);
 
   const handleTimeout = useCallback(() => {
+    if (selected !== null) return;
     answerQuestion(false, null);
-  }, [answerQuestion]);
+  }, [answerQuestion, selected]);
 
   const { playClick, playCorrect, playWrong, audioElements } =
     useSounds(soundEnabled);
