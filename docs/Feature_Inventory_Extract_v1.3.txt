@@ -1,0 +1,141 @@
+FEATURE INVENTORY EXTRACT
+React Quiz Application – v1.2 Baseline
+
+QUIZ ENGINE – CORE FLOW
+
+• Start screen
+• Category selection
+• Question source selection (Local / API)
+• Quiz initialization
+• Question rendering
+• Multiple-choice answer system
+• Answer logging (answersLog)
+• Automatic progression to next question
+• Result screen on completion
+• Cancel quiz during active session
+• Restart / Play again
+
+CATEGORIES (LOCAL DATA)
+
+• HTML (easy / normal / hard)
+• CSS (easy / normal / hard)
+• JavaScript (easy / normal / hard)
+• React (easy / normal / hard)
+• Linux Admin (easy / normal / hard)
+• Taylor Swift (easy / normal / hard)
+
+API INTEGRATION
+
+• Open Trivia Database integration
+• Category to API ID mapping
+• Fetch request handling
+• API response adaptation
+• Answer shuffling
+• Error handling (unsupported category / failed fetch / empty results)
+• Loading state management
+
+DIFFICULTY SYSTEM
+
+• Easy / Normal / Hard modes
+• Header difficulty badge
+• Persistent difficulty selection
+• Difficulty-based statistics structure
+
+QUESTION LIMIT SYSTEM
+
+• Configurable limits: 5 / 10 / 20
+• Limit applied during quiz initialization
+
+TIMER SYSTEM
+
+• Global timer toggle
+• Configurable time per question (5–30 seconds)
+• Per-question countdown
+• Automatic timeout answer submission
+• Timer disabled in retry mode
+
+SOUND SYSTEM
+
+• Global sound toggle
+• Click sound
+• Correct answer sound
+• Wrong answer sound
+• Audio reset before playback
+
+RETRY MODE
+
+• Retry incorrect questions only
+• Retry pool built from weakQuestions
+• Mode switch: normal → retry → normal
+• Score reset during retry
+• Successful retry removes question from weakQuestions
+• Retry never overwrites lastResult
+
+WEAK QUESTION TRACKING
+
+• Incorrect answer accumulation
+• Persistent weakQuestions storage
+• Weak areas display
+• weakCount stored in lastResult
+
+RESULT SYSTEM
+
+• Score display
+• Best score display
+• Accuracy calculation
+• Persistent lastResult object
+• Review answers panel
+• Correct/incorrect highlighting
+• Last Result modal access from header
+
+STATISTICS SYSTEM
+
+• bestScore tracking
+• difficultyStats tracking
+• streak tracking (current / longest)
+• Reset statistics capability
+• Safe localStorage parsing
+
+THEME SYSTEM
+
+• Dark mode
+• Light mode
+• Theme toggle in header
+• Persistent theme storage
+
+SETTINGS MODAL
+
+• Modal overlay with focus management
+• ESC to close
+• Enter key activation
+• Sound toggle
+• Timer toggle
+• Time slider
+• Question limit options
+• Difficulty options
+• Reset statistics
+
+EDGE CASE HARDENING
+
+• Empty question pool protection
+• Invalid category guard
+• Corrupted weakQuestions protection
+• Safe localStorage parsing
+• Deterministic state transitions
+
+ARCHITECTURE
+
+• Single Zustand store
+• Slice isolation (quizSlice, settingsSlice, statsSlice, uiSlice)
+• Deterministic retry state machine
+• isLoading and error states
+
+TESTING COVERAGE
+
+• QuestionCard interaction tests
+• Timer timeout tests
+• Retry flow integration tests
+• Weak question accumulation tests
+• lastResult protection tests
+• Modal rendering tests
+• Edge-case tests
