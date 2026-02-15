@@ -10,9 +10,11 @@ function loadSettings() {
   }
 }
 
-function saveSettings(state) {
+function saveSettings(partial) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const current = loadSettings() || {};
+    const next = { ...current, ...partial };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
     // ignore
   }
@@ -32,51 +34,46 @@ export const settingsSlice = (set) => ({
   timePerQuestion: persisted?.timePerQuestion ?? 15,
 
   setQuestionSource: (source) =>
-    set((s) => {
-      const next = { ...s, source };
-      saveSettings(next);
+    set(() => {
+      saveSettings({ source });
       return { source };
     }),
 
   setCategory: (category) =>
-    set((s) => {
-      const next = { ...s, category };
-      saveSettings(next);
+    set(() => {
+      saveSettings({ category });
       return { category };
     }),
 
   setDifficulty: (difficulty) =>
-    set((s) => {
-      const next = { ...s, difficulty };
-      saveSettings(next);
+    set(() => {
+      saveSettings({ difficulty });
       return { difficulty };
     }),
 
   setQuestionLimit: (limit) =>
-    set((s) => {
-      const next = { ...s, questionLimit: limit };
-      saveSettings(next);
+    set(() => {
+      saveSettings({ questionLimit: limit });
       return { questionLimit: limit };
     }),
 
   toggleSound: () =>
     set((s) => {
-      const next = { ...s, soundEnabled: !s.soundEnabled };
-      saveSettings(next);
-      return { soundEnabled: !s.soundEnabled };
+      const next = !s.soundEnabled;
+      saveSettings({ soundEnabled: next });
+      return { soundEnabled: next };
     }),
 
   toggleTimer: () =>
     set((s) => {
-      const next = { ...s, timerEnabled: !s.timerEnabled };
-      saveSettings(next);
-      return { timerEnabled: !s.timerEnabled };
+      const next = !s.timerEnabled;
+      saveSettings({ timerEnabled: next });
+      return { timerEnabled: next };
     }),
 
   setTimePerQuestion: (time) =>
-    set((s) => {
-      const next = { ...s, timePerQuestion: time };
-      saveSettings(next);
+    set(() => {
+      saveSettings({ timePerQuestion: time });
       return { timePerQuestion: time };
     }),
 });
