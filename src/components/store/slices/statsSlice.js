@@ -59,10 +59,7 @@ export const statsSlice = (set) => {
       storedLastResultRaw &&
       typeof storedLastResultRaw.score === "number" &&
       typeof storedLastResultRaw.accuracy === "number"
-        ? {
-            ...storedLastResultRaw,
-            weakCount: Object.keys(storedWeakQuestions || {}).length,
-          }
+        ? storedLastResultRaw
         : null,
 
     resetStatistics: () => {
@@ -82,12 +79,6 @@ export const statsSlice = (set) => {
         },
         streak: { current: 0, longest: 0, lastDate: null },
         lastResult: null,
-        status: "start",
-        questions: [],
-        currentIndex: 0,
-        score: 0,
-        answersLog: [],
-        mode: "normal",
       });
     },
   };
