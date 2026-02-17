@@ -171,8 +171,10 @@ export const quizSlice = (set, get) => ({
     const safeWeak =
       weakQuestions && typeof weakQuestions === "object" ? weakQuestions : {};
 
+    let updatedWeak = safeWeak;
+
     if (!isCorrect && mode === "normal") {
-      const updatedWeak = {
+      updatedWeak = {
         ...safeWeak,
         [q.id]: {
           id: q.id,
@@ -211,7 +213,7 @@ export const quizSlice = (set, get) => ({
 
       const total = questions.length || 1;
       const accuracy = Math.round((newScore / total) * 100);
-      const weakCount = Object.keys(safeWeak).length;
+      const weakCount = Object.keys(updatedWeak).length;
 
       const lastResult = { score: newScore, accuracy, weakCount };
 
