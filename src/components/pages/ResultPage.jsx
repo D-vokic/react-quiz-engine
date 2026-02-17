@@ -1,45 +1,21 @@
 import { useQuizStore } from "../store/useQuizStore.jsx";
-import { useEffect, useState, useCallback } from "react";
+import { useState } from "react";
 
 function ResultPage() {
   const score = useQuizStore((s) => s.score);
   const bestScore = useQuizStore((s) => s.bestScore);
-  const difficulty = useQuizStore((s) => s.difficulty);
-  const difficultyStats = useQuizStore((s) => s.difficultyStats);
   const weakQuestions = useQuizStore((s) => s.weakQuestions);
   const answersLog = useQuizStore((s) => s.answersLog);
   const restart = useQuizStore((s) => s.restart);
   const startRetryWrong = useQuizStore((s) => s.startRetryWrong);
-  const lastResult = useQuizStore((s) => s.lastResult);
-  const setLastResult = useQuizStore((s) => s.setLastResult);
 
   const [showWeak, setShowWeak] = useState(false);
   const [showReview, setShowReview] = useState(false);
 
-  const weakList = Object.values(weakQuestions).filter((q) => q.wrong > 0);
+  const safeWeak =
+    weakQuestions && typeof weakQuestions === "object" ? weakQuestions : {};
 
-  const accuracy = useCallback(
-    (d) => {
-      const stat = difficultyStats[d];
-      if (!stat || stat.total === 0) return null;
-      return Math.round((stat.correct / stat.total) * 100);
-    },
-    [difficultyStats]
-  );
-
-  useEffect(() => {
-    if (!lastResult) {
-      const result = {
-        score,
-        difficulty,
-        accuracy: accuracy(difficulty),
-        weakCount: weakList.length,
-      };
-
-      localStorage.setItem("lastResult", JSON.stringify(result));
-      setLastResult(result);
-    }
-  }, [lastResult, score, difficulty, weakList.length, accuracy, setLastResult]);
+  const weakList = Object.values(safeWeak).filter((q) => q && q.wrong > 0);
 
   return (
     <div className="result result-compact">
@@ -79,9 +55,7 @@ function ResultPage() {
           {weakList.slice(0, 3).map((q) => (
             <div key={q.id} className="weak-item">
               <div>{q.question}</div>
-              <small>
-                wrong {q.wrong} / {q.total}
-              </small>
+              <small>wrong {q.wrong}</small>
             </div>
           ))}
         </div>
@@ -101,8 +75,8 @@ function ResultPage() {
                       idx === q.correctIndex
                         ? "#4caf50"
                         : idx === q.selectedIndex
-                        ? "#f44336"
-                        : "#aaa",
+                          ? "#f44336"
+                          : "#aaa",
                   }}
                 >
                   {a}
